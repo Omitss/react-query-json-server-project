@@ -1,4 +1,11 @@
-FROM ubuntu:latest
-LABEL authors="KW-19"
+FROM node:22-alpine AS builder
 
-ENTRYPOINT ["top", "-b"]
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build

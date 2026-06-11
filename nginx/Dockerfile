@@ -1,4 +1,9 @@
-FROM ubuntu:latest
-LABEL authors="KW-19"
+FROM nginx:alpine
 
-ENTRYPOINT ["top", "-b"]
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY ../frontend/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx","-g","daemon off;"]
