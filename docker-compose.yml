@@ -1,31 +1,27 @@
-version: "3.8"
-
 services:
 
   json-server:
-    image: node:22-alpine
+    build:
+      context: ./frontend/server
+
     container_name: json-server
-    working_dir: /app
-    volumes:
-      - ./frontend/server:/app
-    command: sh -c "npm install && npx json-server --watch db.json --host 0.0.0.0 --port 3001"
+
     ports:
       - "3001:3001"
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: react-build
-    depends_on:
-      - json-server
+    restart: unless-stopped
 
   nginx:
     build:
       context: .
-      dockerfile: ./nginx/Dockerfile
-    container_name: react-nginx
+      dockerfile: nginx/Dockerfile
+
+    container_name: nginx
+
     depends_on:
-      - frontend
+      - json-server
+
     ports:
       - "80:80"
+
+    restart: unless-stopped

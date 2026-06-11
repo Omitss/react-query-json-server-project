@@ -4,67 +4,91 @@ pipeline {
 
     stages {
 
-        stage('Git Clone') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/Omitss/react-query-json-server-project.git'
-            }
-        }
-
         stage('Check Environment') {
             steps {
-                sh 'node -v'
-                sh 'npm -v'
-                sh 'docker --version'
-                sh 'docker compose version'
+                sh '''
+                    echo "===== Environment ====="
+                    pwd
+                    ls -al
+
+                    echo "===== Node ====="
+                    node -v
+                    npm -v
+
+                    echo "===== Docker ====="
+                    docker --version
+
+                    echo "===== Buildx ====="
+                    docker buildx version || true
+
+                    echo "===== Compose ====="
+                    docker-compose --version || true
+                '''
             }
         }
+        stage('Install Frontend') {
+                    steps {
+                        dir('frontend') {
+                            sh 'npm install'
+                        }
+                    }
+                }
 
-        stage('React Build Test') {
-            steps {
-                dir('frontend') {
-                    sh 'npm install'
-                    sh 'npm run build'
+                stage('Build Frontend') {
+                    steps {
+                        dir('frontend') {
+                            sh 'npm run build'
+                        }
+                    }
+                }
+
+                stage('Deploy') {
+                    steps {
+                        sh '''
+                            docker-compose down || true
+                            docker-compose build --no-cache
+                            docker-compose up -d
+                        '''
+                    }
+                }
+
+                stage('Check Containers') {
+                    steps {
+                        sh '''
+                            docker ps
+                        '''
+                    }
+                }
+            }
+
+            post {
+
+                success {
+                    echo '========================'
+                    echo '배포 완료'
+                    echo '========================'
+
+                    sh '''
+                        docker ps
+                    '''
+                }
+
+                failure {
+                    echo '========================'
+                    echo '배포 실패'
+                    echo '========================'
+
+                    sh '''
+                        echo "===== Docker PS ====="
+                        docker ps -a || true
+
+                        echo "===== Docker Images ====="
+                        docker images || true
+                    '''
+                }
+
+                always {
+                    sh 'docker ps || true'
                 }
             }
         }
-
-        stage('Docker Compose Build') {
-            steps {
-                sh 'docker compose build --no-cache'
-            }
-        }
-
-        stage('Docker Deploy') {
-            steps {
-                sh 'docker compose down || true'
-                sh 'docker compose up -d'
-            }
-        }
-
-        stage('Container Check') {
-            steps {
-                sh 'docker ps'
-            }
-        }
-    }
-
-    post {
-
-        success {
-            echo '================================'
-            echo ' React + Json Server 배포 성공 '
-            echo '================================'
-        }
-
-        failure {
-            echo '================================'
-            echo ' React + Json Server 배포 실패 '
-            echo '================================'
-        }
-
-        always {
-            cleanWs()
-        }
-    }
-}
