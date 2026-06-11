@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useAllGetUser } from "./useUser"
-import { useAllGetProduct } from "./useProduct"
+import { useAllGetProduct } from "./useProduct.js"
 import { salesAllGetApi } from "../apis/sales.api"
 import { useMemo } from "react"
 

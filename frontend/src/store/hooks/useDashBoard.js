@@ -1,5 +1,5 @@
 import { useAllGetUser } from "./useUser";
-import { useAllGetProduct } from "./useProduct";
+import { useAllGetProduct } from "./useProduct.js";
 import { useAllGetSales } from "./useSales";
 import { useMemo } from "react";
 

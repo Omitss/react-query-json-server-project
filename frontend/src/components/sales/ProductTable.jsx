@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { useAllGetProduct, useDeleteProduct, usePostRegisterProduct, usePutUpdateProduct } from '../../store/hooks/useproduct'
+import { useAllGetProduct, useDeleteProduct, usePostRegisterProduct, usePutUpdateProduct } from '../../store/hooks/useProduct.js'
 import { AgGridReact } from 'ag-grid-react';
 import ProductModal from './ProductModal';
 
