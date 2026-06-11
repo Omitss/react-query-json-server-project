@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
-import { useDashBoard } from "../../store/hooks/useDashboard";
+import { useDashBoard } from "../../store/hooks/useDashBoard";
 
 import {
   Chart as ChartJS,
